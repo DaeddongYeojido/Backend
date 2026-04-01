@@ -7,6 +7,7 @@ import com.daeddong.dto.response.ToiletSummaryResponse;
 import com.daeddong.global.exception.DaeddongException;
 import com.daeddong.global.exception.ErrorCode;
 import com.daeddong.repository.CrowdVoteRepository;
+import com.daeddong.repository.ReviewRepository;
 import com.daeddong.repository.ToiletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class ToiletService {
 
     private final ToiletRepository toiletRepository;
     private final CrowdVoteRepository crowdVoteRepository;
+    private final ReviewRepository reviewRepository;
 
     public List<ToiletSummaryResponse> findNearby(ToiletNearbyRequest request) {
         boolean hasFilter = request.getOpenStatus() != null || request.getIsDisabled() != null;
@@ -50,7 +52,10 @@ public class ToiletService {
                 .stream()
                 .collect(Collectors.groupingBy(v -> v.getLevel().name(), Collectors.counting()));
 
-        return ToiletDetailResponse.from(toilet, crowdSummary);
+        Double averageRating = reviewRepository.findAverageRatingByToiletId(toiletId);
+        long reviewCount = reviewRepository.countByToiletId(toiletId);
+
+        return ToiletDetailResponse.from(toilet, crowdSummary, averageRating, reviewCount);
     }
 
     public ToiletSummaryResponse findNearest(double lat, double lng) {
