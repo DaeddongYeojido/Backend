@@ -21,8 +21,11 @@ public class ToiletDetailResponse {
     private Toilet.Source source;
     private Map<String, Long> crowdSummary;
     private String currentCrowd;
+    private Double averageRating;   // 리뷰 평균 별점 (리뷰 없으면 null)
+    private long reviewCount;       // 리뷰 총 개수
 
-    public static ToiletDetailResponse from(Toilet toilet, Map<String, Long> crowdSummary) {
+    public static ToiletDetailResponse from(Toilet toilet, Map<String, Long> crowdSummary,
+                                            Double averageRating, long reviewCount) {
         String currentCrowd = crowdSummary.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
@@ -41,6 +44,8 @@ public class ToiletDetailResponse {
                 .source(toilet.getSource())
                 .crowdSummary(crowdSummary)
                 .currentCrowd(currentCrowd)
+                .averageRating(averageRating)
+                .reviewCount(reviewCount)
                 .build();
     }
 }
