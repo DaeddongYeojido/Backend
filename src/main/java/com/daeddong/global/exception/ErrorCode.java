@@ -14,7 +14,18 @@ public enum ErrorCode {
     INVALID_CROWD_LEVEL(HttpStatus.BAD_REQUEST, "유효하지 않은 혼잡도 값입니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 해당 화장실에 리뷰를 작성하셨습니다."),
-    REVIEW_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 리뷰만 삭제할 수 있습니다.");
+    REVIEW_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 리뷰만 삭제할 수 있습니다."),
+
+    // S3 / 이미지
+    S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
+    IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "이미지 파일이 비어있습니다."),
+    IMAGE_TYPE_INVALID(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 형식입니다. (jpeg, png, webp, heic 허용)"),
+    IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "이미지 크기는 10MB 이하여야 합니다."),
+
+    // 제보
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "제보를 찾을 수 없습니다."),
+    REPORT_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 제보만 삭제할 수 있습니다."),
+    REPORT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 제보입니다.");
 
     private final HttpStatus status;
     private final String message;
