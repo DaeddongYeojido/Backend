@@ -14,6 +14,7 @@ public class ReviewResponse {
     private String deviceId;
     private int rating;
     private String content;
+    private String imageUrl;
     private LocalDateTime createdAt;
 
     public static ReviewResponse from(Review review) {
@@ -23,6 +24,7 @@ public class ReviewResponse {
                 .deviceId(review.getDeviceId())
                 .rating(review.getRating())
                 .content(review.getContent())
+                .imageUrl(review.getImageUrl())
                 .createdAt(review.getCreatedAt())
                 .build();
     }
