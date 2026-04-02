@@ -29,3 +29,12 @@ logging:
 crowd:
   vote:
     expire-minutes: 10
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+      region: ${S3_REGION:ap-northeast-2}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}

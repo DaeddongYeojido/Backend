@@ -27,6 +27,9 @@ public class Review {
     @Column(length = 500)
     private String content;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -35,12 +38,13 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Review create(Toilet toilet, String deviceId, int rating, String content) {
+    public static Review create(Toilet toilet, String deviceId, int rating, String content, String imageUrl) {
         Review r = new Review();
         r.toilet = toilet;
         r.deviceId = deviceId;
         r.rating = rating;
         r.content = content;
+        r.imageUrl = imageUrl;
         return r;
     }
 }
