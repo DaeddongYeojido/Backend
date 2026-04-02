@@ -12,9 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/toilets/{toiletId}/reviews")
@@ -24,13 +26,20 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping
+    /**
+     * 리뷰 등록
+     * Content-Type: multipart/form-data
+     * - data: ReviewRequest JSON 파트 (application/json)
+     * - image: 이미지 파일 (optional)
+     */
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
             @PathVariable Long toiletId,
-            @RequestBody @Valid ReviewRequest request
+            @RequestPart("data") @Valid ReviewRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("리뷰가 등록되었습니다.", reviewService.createReview(toiletId, request)));
+                .body(ApiResponse.ok("리뷰가 등록되었습니다.", reviewService.createReview(toiletId, request, image)));
     }
 
     @GetMapping
