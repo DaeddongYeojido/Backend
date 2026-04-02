@@ -45,6 +45,17 @@ public class ToiletReportController {
     }
 
     /**
+     * 전체 제보 목록 (게시판용)
+     * GET /api/v1/reports?page=0&size=20&sort=createdAt,desc
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<ToiletReportResponse>>> getReports(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(reportService.getReports(pageable)));
+    }
+
+    /**
      * 내 제보 목록
      * GET /api/v1/reports/my?deviceId=xxx
      */

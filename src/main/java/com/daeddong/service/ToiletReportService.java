@@ -50,6 +50,12 @@ public class ToiletReportService {
         return ToiletReportResponse.from(reportRepository.save(report));
     }
 
+    // ToiletReportService.java
+    public Page<ToiletReportResponse> getReports(Pageable pageable) {
+        return reportRepository.findAll(pageable)
+                .map(ToiletReportResponse::from);
+    }
+
     /** 본인 제보 목록 */
     public Page<ToiletReportResponse> getMyReports(String deviceId, Pageable pageable) {
         return reportRepository.findByDeviceIdOrderByCreatedAtDesc(deviceId, pageable)
