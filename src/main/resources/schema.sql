@@ -78,7 +78,6 @@ CREATE TABLE IF NOT EXISTS fcm_tokens
     INDEX idx_fcm_location (last_lat, last_lng)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '기기별 FCM 토큰';
 
-
 CREATE TABLE IF NOT EXISTS toilet_reports
 (
     id                  BIGINT        NOT NULL AUTO_INCREMENT,
@@ -102,3 +101,21 @@ CREATE TABLE IF NOT EXISTS toilet_reports
     INDEX idx_report_device (device_id),
     CONSTRAINT fk_report_approved_toilet FOREIGN KEY (approved_toilet_id) REFERENCES toilets (id) ON DELETE SET NULL
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS crowd_votes
+(
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
+    toilet_id   BIGINT       NOT NULL,
+    device_id   VARCHAR(100) NOT NULL,
+    level       VARCHAR(20)  NOT NULL,
+    voted_at    DATETIME     NOT NULL,
+    expires_at  DATETIME     NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_crowd_device_toilet (device_id, toilet_id),
+    INDEX idx_crowd_toilet_expires (toilet_id, expires_at),
+
+    CONSTRAINT fk_crowd_toilet
+        FOREIGN KEY (toilet_id) REFERENCES toilets (id)
+            ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
