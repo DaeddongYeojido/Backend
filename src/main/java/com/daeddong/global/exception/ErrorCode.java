@@ -25,7 +25,14 @@ public enum ErrorCode {
     // 제보
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "제보를 찾을 수 없습니다."),
     REPORT_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 제보만 삭제할 수 있습니다."),
-    REPORT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 제보입니다.");
+    REPORT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 제보입니다."),
+
+    // 휴지 요청
+    PAPER_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "휴지 요청을 찾을 수 없습니다."),
+    PAPER_REQUEST_TOO_FAR(HttpStatus.BAD_REQUEST, "화장실로부터 500m 이내에서만 휴지 요청이 가능합니다."),
+    PAPER_REQUEST_DAILY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "휴지 요청은 하루에 한 번만 사용할 수 있습니다. 정말 긴급한 상황인가요?!?"),
+    PAPER_REQUEST_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "이미 종료되었거나 만료된 휴지 요청입니다."),
+    PAPER_REQUEST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 요청한 건만 처리할 수 있습니다.");
 
     private final HttpStatus status;
     private final String message;
