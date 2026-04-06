@@ -46,6 +46,39 @@ CREATE TABLE IF NOT EXISTS reviews
     CONSTRAINT fk_review_toilet FOREIGN KEY (toilet_id) REFERENCES toilets (id) ON DELETE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+
+CREATE TABLE IF NOT EXISTS paper_requests
+(
+    id                    BIGINT        NOT NULL AUTO_INCREMENT,
+    toilet_id             BIGINT        NOT NULL,
+    device_id             VARCHAR(100)  NOT NULL,
+    gender                VARCHAR(10)   NOT NULL COMMENT 'MALE | FEMALE',
+    status                VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | RESCUED | EXPIRED',
+    requested_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at            DATETIME      NOT NULL COMMENT '요청 후 7분',
+    rescued_at            DATETIME      NULL,
+    rescue_display_until  DATETIME      NULL     COMMENT '구조 완료 후 3분간 *구조* 마커 표시',
+    PRIMARY KEY (id),
+    INDEX idx_paper_status_expires (status, expires_at),
+    INDEX idx_paper_device (device_id),
+    INDEX idx_paper_toilet (toilet_id),
+    CONSTRAINT fk_paper_toilet FOREIGN KEY (toilet_id) REFERENCES toilets (id) ON DELETE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '긴급 휴지 요청';
+
+CREATE TABLE IF NOT EXISTS fcm_tokens
+(
+    id          BIGINT        NOT NULL AUTO_INCREMENT,
+    device_id   VARCHAR(100)  NOT NULL,
+    fcm_token   VARCHAR(500)  NOT NULL,
+    last_lat    DECIMAL(10,7) NULL     COMMENT '마지막 위도',
+    last_lng    DECIMAL(10,7) NULL     COMMENT '마지막 경도',
+    updated_at  DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_fcm_device (device_id),
+    INDEX idx_fcm_location (last_lat, last_lng)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '기기별 FCM 토큰';
+
+
 CREATE TABLE IF NOT EXISTS toilet_reports
 (
     id                  BIGINT        NOT NULL AUTO_INCREMENT,
