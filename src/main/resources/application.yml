@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: daeddong
+
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:daeddong}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME:root}
@@ -6,14 +9,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    hibernate:
-      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         use_sql_comments: true
-    show-sql: false
 
   jackson:
     time-zone: Asia/Seoul
@@ -24,7 +24,6 @@ server:
 logging:
   level:
     com.daeddong: DEBUG
-    org.hibernate.SQL: DEBUG
 
 crowd:
   vote:
