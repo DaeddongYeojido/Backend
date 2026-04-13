@@ -4,8 +4,8 @@
 
 set -euo pipefail
 
-# ── 설정값 (팀 환경에 맞게 수정) ──────────────────────────────────
-PROJECT_ID="your-gcp-project-id"       # GCP 프로젝트 ID
+# ── 설정값 ──────────────────────────────────
+PROJECT_ID="daeddong"       # GCP 프로젝트 ID
 REGION="asia-northeast3"               # 서울 리전
 SERVICE_NAME="daeddong-backend"
 IMAGE="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
@@ -36,7 +36,7 @@ AWS_SECRET_KEY=daeddong-aws-secret-key:latest,\
 S3_BUCKET_NAME=daeddong-s3-bucket:latest,\
 FIREBASE_SERVICE_ACCOUNT_PATH=daeddong-firebase-path:latest"
 
-echo "✅ 배포 완료!"
+echo "배포 완료!"
 gcloud run services describe "${SERVICE_NAME}" \
   --region "${REGION}" \
   --format "value(status.url)"
