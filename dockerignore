@@ -1,0 +1,15 @@
+.gradle
+.idea
+.git
+.gitignore
+build
+out
+*.md
+
+# 로컬 설정 파일 (prod 환경 변수로 주입)
+src/main/resources/application-local.yml
+
+# 민감 파일 - 절대 이미지에 포함하지 않음
+firebase-service-account.json
+*.env
+.env*
