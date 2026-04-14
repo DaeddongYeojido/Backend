@@ -4,8 +4,7 @@ spring:
       on-profile: prod
 
   datasource:
-    # Cloud Run + Cloud SQL 소켓 방식 연결
-    url: jdbc:mysql:///${DB_NAME}?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=daeddong:asia-northeast3:daeddong-db&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
