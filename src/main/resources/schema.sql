@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS reviews
     id          BIGINT       NOT NULL AUTO_INCREMENT,
     toilet_id   BIGINT       NOT NULL,
     device_id   VARCHAR(100) NOT NULL,
-    rating      TINYINT      NOT NULL,
+    rating      INT      NOT NULL,
     content     VARCHAR(500),
     image_url   VARCHAR(500),
     created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
