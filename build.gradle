@@ -48,6 +48,9 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 
     implementation 'com.google.firebase:firebase-admin:9.3.0'
+
+    // Cloud SQL MySQL 소켓 팩토리
+    implementation 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.19.0'
 }
 
 def querydslDir = "src/main/generated"

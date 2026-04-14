@@ -52,4 +52,3 @@ springdoc:
 
 firebase:
   service-account-path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
-  

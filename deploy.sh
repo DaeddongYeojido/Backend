@@ -36,7 +36,7 @@ DB_PASSWORD=daeddong-db-password:latest,\
 AWS_ACCESS_KEY=daeddong-aws-access-key:latest,\
 AWS_SECRET_KEY=daeddong-aws-secret-key:latest,\
 S3_BUCKET_NAME=daeddong-s3-bucket:latest,\
-FIREBASE_SERVICE_ACCOUNT_PATH=daeddong-firebase-path:latest"
+FIREBASE_SERVICE_ACCOUNT_PATH=daeddong-firebase-sa:latest"
 
 echo "배포 완료!"
 gcloud run services describe "${SERVICE_NAME}" \
