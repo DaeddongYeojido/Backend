@@ -5,15 +5,18 @@ spring:
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:daeddong}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         use_sql_comments: true
+    show-sql: true
 
   jackson:
     time-zone: Asia/Seoul
@@ -24,6 +27,7 @@ server:
 logging:
   level:
     com.daeddong: DEBUG
+    org.hibernate.SQL: DEBUG
 
 crowd:
   vote:
@@ -32,11 +36,11 @@ crowd:
 cloud:
   aws:
     s3:
-      bucket: ${S3_BUCKET_NAME}
+      bucket: ${S3_BUCKET_NAME:}
       region: ${S3_REGION:ap-northeast-2}
     credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
+      access-key: ${AWS_ACCESS_KEY:}
+      secret-key: ${AWS_SECRET_KEY:}
 
 springdoc:
   swagger-ui:
@@ -48,3 +52,4 @@ springdoc:
 
 firebase:
   service-account-path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
+  

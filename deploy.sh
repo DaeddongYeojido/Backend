@@ -5,11 +5,12 @@
 set -euo pipefail
 
 # ── 설정값 ──────────────────────────────────
-PROJECT_ID="daeddong"       # GCP 프로젝트 ID
-REGION="asia-northeast3"               # 서울 리전
+PROJECT_ID="daeddong"                        # GCP 프로젝트 ID
+REGION="asia-northeast3"                     # 서울 리전
 SERVICE_NAME="daeddong-backend"
 IMAGE="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
-# ──────────────────────────────────────────────────────────────────
+CLOUD_SQL_INSTANCE="daeddong:asia-northeast3:daeddong-db"
+# ────────────────────────────────────────────
 
 echo "▶ Docker 이미지 빌드 & 푸시"
 gcloud builds submit --tag "${IMAGE}" .
@@ -25,6 +26,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --cpu 1 \
   --min-instances 0 \
   --max-instances 10 \
+  --add-cloudsql-instances "${CLOUD_SQL_INSTANCE}" \
   --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
   --set-secrets \
     "DB_HOST=daeddong-db-host:latest,\

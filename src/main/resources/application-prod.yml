@@ -3,6 +3,12 @@ spring:
     activate:
       on-profile: prod
 
+  datasource:
+    # Cloud Run + Cloud SQL 소켓 방식 연결
+    url: jdbc:mysql:///${DB_NAME}?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=daeddong:asia-northeast3:daeddong-db&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -10,4 +16,5 @@ spring:
 
 logging:
   level:
+    com.daeddong: INFO
     org.hibernate.SQL: WARN
