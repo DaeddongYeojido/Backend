@@ -2,8 +2,10 @@ package com.daeddong.global.exception;
 
 import com.daeddong.global.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -94,6 +96,14 @@ public class GlobalExceptionHandler {
         log.warn("[UnsupportedMediaType] {}", e.getMessage());
         return ResponseEntity.status(ErrorCode.UNSUPPORTED_MEDIA_TYPE.getStatus())
                 .body(ApiResponse.fail(ErrorCode.UNSUPPORTED_MEDIA_TYPE.getMessage()));
+    }
+
+    // ── 동시 수정 ────────────────────────────────────────────────
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<?> handleOptimisticLock() {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("이미 다른 관리자가 처리한 제보입니다.");
     }
 
     // ── 예상치 못한 예외 (최후 방어선) ─────────────────────────────────────
