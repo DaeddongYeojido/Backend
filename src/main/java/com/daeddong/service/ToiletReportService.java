@@ -101,6 +101,10 @@ public class ToiletReportService {
             throw new DaeddongException(ErrorCode.REPORT_ALREADY_PROCESSED);
         }
 
+        if (report.getApprovedToiletId() != null) {
+            throw new DaeddongException(ErrorCode.REPORT_ALREADY_PROCESSED);
+        }
+
         // lat/lng → Point 변환 (SRID 4326)
         Point location = geometryFactory.createPoint(
                 new Coordinate(report.getLng(), report.getLat())
