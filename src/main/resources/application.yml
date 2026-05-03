@@ -16,7 +16,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         use_sql_comments: true
-    show-sql: true
+    show-sql: false
 
   jackson:
     time-zone: Asia/Seoul
@@ -26,8 +26,8 @@ server:
 
 logging:
   level:
-    com.daeddong: DEBUG
-    org.hibernate.SQL: DEBUG
+    com.daeddong: INFO
+    org.hibernate.SQL: WARN
 
 crowd:
   vote:
