@@ -35,9 +35,15 @@ public class ToiletReportService {
     /** 화장실 제보 등록 */
     @Transactional
     public ToiletReportResponse createReport(ToiletReportRequest request, MultipartFile image) {
+
+        if (!isInSeoul(request.getLat(), request.getLng())) {
+            throw new DaeddongException(ErrorCode.INVALID_LOCATION);
+        }
+
         String imageUrl = (image != null && !image.isEmpty())
                 ? s3Uploader.upload(image, S3_FOLDER)
                 : null;
+
 
         ToiletReport report = ToiletReport.create(
                 request.getDeviceId(),
@@ -148,5 +154,10 @@ public class ToiletReportService {
     private ToiletReport findReport(Long reportId) {
         return reportRepository.findById(reportId)
                 .orElseThrow(() -> new DaeddongException(ErrorCode.REPORT_NOT_FOUND));
+    }
+
+    private boolean isInSeoul(double lat, double lng) {
+        return (lat >= 37.41 && lat <= 37.70) &&
+                (lng >= 126.73 && lng <= 127.27);
     }
 }
