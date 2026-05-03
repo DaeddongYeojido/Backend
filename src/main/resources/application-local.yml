@@ -12,4 +12,3 @@ logging:
   level:
     com.daeddong: DEBUG
     org.hibernate.SQL: DEBUG
-    

@@ -55,6 +55,7 @@ public enum ErrorCode {
     PAPER_REQUEST_NOT_ACTIVE(HttpStatus.CONFLICT, "이미 종료되었거나 만료된 휴지 요청입니다."),
     PAPER_REQUEST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 요청한 건만 처리할 수 있습니다."),
     PAPER_REQUEST_ALREADY_RESCUED(HttpStatus.CONFLICT, "이미 구조 완료된 요청입니다."),
+    PAPER_REQUEST_DUPLICATE(HttpStatus.CONFLICT, "해당 화장실에 이미 진행 중인 휴지 요청이 있습니다."),
 
     // ── FCM ───────────────────────────────────────────────────────────────
     FCM_TOKEN_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 FCM 토큰입니다."),

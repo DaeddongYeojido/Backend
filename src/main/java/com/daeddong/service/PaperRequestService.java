@@ -63,13 +63,18 @@ public class PaperRequestService {
             throw new DaeddongException(ErrorCode.PAPER_REQUEST_DAILY_LIMIT_EXCEEDED);
         }
 
-        // 4. 저장
+        // 4. 같은 화장실에 이미 ACTIVE 요청이 있으면 차단
+        if (paperRequestRepository.existsActiveByToiletId(req.getToiletId(), LocalDateTime.now())) {
+            throw new DaeddongException(ErrorCode.PAPER_REQUEST_DUPLICATE);
+        }
+
+        // 5. 저장
         PaperRequest paperRequest = PaperRequest.create(toilet, req.getDeviceId(), req.getGender());
         paperRequestRepository.save(paperRequest);
         log.info("[PaperRequest] 생성 - id={}, toiletId={}, deviceId={}, gender={}",
                 paperRequest.getId(), toilet.getId(), req.getDeviceId(), req.getGender());
 
-        // 5. 주변 1km FCM 알림 (실패해도 요청은 정상 처리)
+        // 6. 주변 1km FCM 알림 (실패해도 요청은 정상 처리)
         sendNearbyNotifications(req.getLat(), req.getLng(), req.getDeviceId(), toilet.getName());
 
         return PaperRequestResponse.from(paperRequest);

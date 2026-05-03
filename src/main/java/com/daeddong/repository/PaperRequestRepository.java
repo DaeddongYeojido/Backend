@@ -26,6 +26,18 @@ public interface PaperRequestRepository extends JpaRepository<PaperRequest, Long
             @Param("endOfDay") LocalDateTime endOfDay
     );
 
+    /** 특정 화장실에 이미 활성 요청이 있는지 확인 (중복 생성 방지) */
+    @Query("""
+            SELECT COUNT(pr) > 0 FROM PaperRequest pr
+            WHERE pr.toilet.id = :toiletId
+              AND pr.status = 'ACTIVE'
+              AND pr.expiresAt > :now
+            """)
+    boolean existsActiveByToiletId(
+            @Param("toiletId") Long toiletId,
+            @Param("now") LocalDateTime now
+    );
+
     /** 지도 마커용: 현재 ACTIVE 상태 전체 */
     @Query("""
             SELECT pr FROM PaperRequest pr
