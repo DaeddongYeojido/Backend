@@ -1,6 +1,8 @@
 package com.daeddong.dto.request;
 
 import com.daeddong.domain.Toilet;
+import com.daeddong.global.exception.DaeddongException;
+import com.daeddong.global.exception.ErrorCode;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +35,7 @@ public class ToiletNearbyRequest {
             try {
                 this.openStatus = Toilet.OpenStatus.valueOf(openStatus.toUpperCase());
             } catch (IllegalArgumentException e) {
-                this.openStatus = null;
+                throw new DaeddongException(ErrorCode.INVALID_OPEN_STATUS);
             }
         }
     }
