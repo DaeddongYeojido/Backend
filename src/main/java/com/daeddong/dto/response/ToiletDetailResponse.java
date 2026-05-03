@@ -1,8 +1,11 @@
 package com.daeddong.dto.response;
 
+import com.daeddong.domain.CrowdVote;
 import com.daeddong.domain.Toilet;
 import lombok.Builder;
 import lombok.Getter;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -24,12 +27,23 @@ public class ToiletDetailResponse {
     private Double averageRating;   // 리뷰 평균 별점 (리뷰 없으면 null)
     private long reviewCount;       // 리뷰 총 개수
 
+    /**
+     * 동률 시 우선순위: CROWDED > NORMAL > EMPTY
+     * 투표가 없으면 null 반환
+     */
+    private static final List<String> CROWD_PRIORITY =
+            List.of("CROWDED", "NORMAL", "EMPTY");
+
     public static ToiletDetailResponse from(Toilet toilet, Map<String, Long> crowdSummary,
                                             Double averageRating, long reviewCount) {
-        String currentCrowd = crowdSummary.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        String currentCrowd = null;
+        if (!crowdSummary.isEmpty()) {
+            long maxCount = crowdSummary.values().stream().max(Comparator.naturalOrder()).orElse(0L);
+            currentCrowd = CROWD_PRIORITY.stream()
+                    .filter(level -> crowdSummary.getOrDefault(level, 0L) == maxCount)
+                    .findFirst()
+                    .orElse(null);
+        }
 
         return ToiletDetailResponse.builder()
                 .id(toilet.getId())
