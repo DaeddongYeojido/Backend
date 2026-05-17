@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,9 +38,13 @@ public class ToiletReportService {
     @Transactional
     public ToiletReportResponse createReport(ToiletReportRequest request, MultipartFile image) {
 
+        // 서울 여부 확인
         if (!isInSeoul(request.getLat(), request.getLng())) {
             throw new DaeddongException(ErrorCode.INVALID_LOCATION);
         }
+
+        // 중복 제보 확인
+        validateDuplicate(request);
 
         String imageUrl = (image != null && !image.isEmpty())
                 ? s3Uploader.upload(image, S3_FOLDER)
@@ -159,5 +165,31 @@ public class ToiletReportService {
     private boolean isInSeoul(double lat, double lng) {
         return (lat >= 37.41 && lat <= 37.70) &&
                 (lng >= 126.73 && lng <= 127.27);
+    }
+
+    // 사용자 중복 제보 방지(실수 방지)
+    private static final long DUPLICATE_MINUTES = 2;
+
+    private void validateDuplicate(ToiletReportRequest request) {
+
+        LocalDateTime checkTime =
+                LocalDateTime.now()
+                        .minusMinutes(DUPLICATE_MINUTES);
+
+        boolean exists =
+                reportRepository
+                        .existsByDeviceIdAndNameAndAddressAndStatusAndCreatedAtAfter(
+                                request.getDeviceId(),
+                                request.getName().trim(),
+                                request.getAddress().trim(),
+                                ReportStatus.PENDING,
+                                checkTime
+                        );
+
+        if (exists) {
+            throw new DaeddongException(
+                    ErrorCode.REPORT_DUPLICATE
+            );
+        }
     }
 }
