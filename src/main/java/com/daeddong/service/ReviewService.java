@@ -1,6 +1,7 @@
 package com.daeddong.service;
 
 import com.daeddong.domain.Review;
+import com.daeddong.domain.ReviewTag;
 import com.daeddong.domain.Toilet;
 import com.daeddong.dto.request.ReviewRequest;
 import com.daeddong.dto.response.ReviewResponse;
@@ -8,6 +9,7 @@ import com.daeddong.global.exception.DaeddongException;
 import com.daeddong.global.exception.ErrorCode;
 import com.daeddong.global.s3.S3Uploader;
 import com.daeddong.repository.ReviewRepository;
+import com.daeddong.repository.ReviewTagRepository;
 import com.daeddong.repository.ToiletRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ public class ReviewService {
     private static final String S3_FOLDER = "reviews";
 
     private final ReviewRepository reviewRepository;
+    private final ReviewTagRepository reviewTagRepository;
     private final ToiletRepository toiletRepository;
     private final S3Uploader s3Uploader;
 
@@ -36,14 +39,28 @@ public class ReviewService {
         reviewRepository.findByToiletIdAndDeviceId(toiletId, request.getDeviceId())
                 .ifPresent(r -> { throw new DaeddongException(ErrorCode.REVIEW_ALREADY_EXISTS); });
 
-        // 이미지가 있으면 S3 업로드 (선택 사항)
+        // 이미지 S3 업로드 (선택)
         String imageUrl = (image != null && !image.isEmpty())
                 ? s3Uploader.upload(image, S3_FOLDER)
                 : null;
 
+        // 리뷰 저장
         Review review = Review.create(toilet, request.getDeviceId(),
                 request.getRating(), request.getContent(), imageUrl);
-        return ReviewResponse.from(reviewRepository.save(review));
+        reviewRepository.save(review);
+
+        // 태그 저장 (중복 태그 제거 후 저장)
+        if (request.getTags() != null) {
+            request.getTags().stream()
+                    .distinct()
+                    .map(tag -> ReviewTag.create(review, toilet, tag))
+                    .forEach(rt -> {
+                        review.addTag(rt);
+                        reviewTagRepository.save(rt);
+                    });
+        }
+
+        return ReviewResponse.from(review);
     }
 
     public Page<ReviewResponse> getReviews(Long toiletId, Pageable pageable) {
@@ -69,6 +86,7 @@ public class ReviewService {
         // S3 이미지 삭제 (imageUrl 없으면 내부에서 무시됨)
         s3Uploader.delete(review.getImageUrl());
 
+        // review_tags는 CascadeType.ALL + orphanRemoval=true 로 자동 삭제됨
         reviewRepository.delete(review);
     }
 }

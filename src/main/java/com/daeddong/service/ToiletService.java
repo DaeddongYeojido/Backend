@@ -1,18 +1,22 @@
 package com.daeddong.service;
 
+import com.daeddong.domain.ReviewTag;
 import com.daeddong.domain.Toilet;
 import com.daeddong.dto.request.ToiletNearbyRequest;
 import com.daeddong.dto.response.ToiletDetailResponse;
+import com.daeddong.dto.response.ToiletDetailResponse.TagCount;
 import com.daeddong.dto.response.ToiletSummaryResponse;
 import com.daeddong.global.exception.DaeddongException;
 import com.daeddong.global.exception.ErrorCode;
 import com.daeddong.repository.CrowdVoteRepository;
 import com.daeddong.repository.ReviewRepository;
+import com.daeddong.repository.ReviewTagRepository;
 import com.daeddong.repository.ToiletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ public class ToiletService {
     private final ToiletRepository toiletRepository;
     private final CrowdVoteRepository crowdVoteRepository;
     private final ReviewRepository reviewRepository;
+    private final ReviewTagRepository reviewTagRepository;
 
     public List<ToiletSummaryResponse> findNearby(ToiletNearbyRequest request) {
         boolean hasFilter = request.getOpenStatus() != null || request.getIsDisabled() != null;
@@ -47,15 +52,26 @@ public class ToiletService {
         Toilet toilet = toiletRepository.findById(toiletId)
                 .orElseThrow(() -> new DaeddongException(ErrorCode.TOILET_NOT_FOUND));
 
+        // 혼잡도 집계 (만료되지 않은 투표만)
         Map<String, Long> crowdSummary = crowdVoteRepository
                 .findActiveVotes(toiletId, LocalDateTime.now())
                 .stream()
-                .collect(Collectors.groupingBy(v -> v.getLevel().name(), Collectors.counting()));
+                .collect(Collectors.groupingBy(
+                        v -> v.getLevel().name(), Collectors.counting()));
 
+        // 리뷰 통계
         Double averageRating = reviewRepository.findAverageRatingByToiletId(toiletId);
         long reviewCount = reviewRepository.countByToiletId(toiletId);
 
-        return ToiletDetailResponse.from(toilet, crowdSummary, averageRating, reviewCount);
+        // 태그 집계: [tag, count] Object[] → TagCount DTO 변환
+        List<TagCount> tagSummary = reviewTagRepository
+                .countByToiletIdGroupByTag(toiletId)
+                .stream()
+                .map(row -> TagCount.of((ReviewTag.Tag) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        return ToiletDetailResponse.from(
+                toilet, crowdSummary, averageRating, reviewCount, tagSummary);
     }
 
     public ToiletSummaryResponse findNearest(double lat, double lng) {

@@ -101,3 +101,16 @@ CREATE TABLE IF NOT EXISTS toilet_reports
     INDEX idx_report_device (device_id),
     CONSTRAINT fk_report_approved_toilet FOREIGN KEY (approved_toilet_id) REFERENCES toilets (id) ON DELETE SET NULL
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS review_tags
+(
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
+    review_id   BIGINT       NOT NULL,
+    toilet_id   BIGINT       NOT NULL COMMENT '집계 쿼리용 인덱스',
+    tag         VARCHAR(30)  NOT NULL COMMENT 'CLEAN | SMELLY | NO_PAPER | SPACIOUS | NARROW | WELL_MAINTAINED | BROKEN',
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_review_tag (review_id, tag),
+    INDEX idx_tag_toilet (toilet_id, tag),
+    CONSTRAINT fk_tag_review  FOREIGN KEY (review_id)  REFERENCES reviews (id) ON DELETE CASCADE,
+    CONSTRAINT fk_tag_toilet  FOREIGN KEY (toilet_id)  REFERENCES toilets (id) ON DELETE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '리뷰 태그';

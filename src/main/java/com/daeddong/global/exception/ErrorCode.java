@@ -34,6 +34,8 @@ public enum ErrorCode {
     REVIEW_TOILET_MISMATCH(HttpStatus.BAD_REQUEST, "해당 화장실의 리뷰가 아닙니다."),
     INVALID_RATING(HttpStatus.BAD_REQUEST, "별점은 1점에서 5점 사이여야 합니다."),
     REVIEW_CONTENT_TOO_LONG(HttpStatus.BAD_REQUEST, "리뷰 내용은 500자 이하여야 합니다."),
+    INVALID_REVIEW_TAG(HttpStatus.BAD_REQUEST, "유효하지 않은 태그입니다."),
+    REVIEW_TAG_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "태그는 최대 3개까지 선택 가능합니다."),
 
     // ── S3 / 이미지 ───────────────────────────────────────────────────────
     S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
@@ -60,6 +62,7 @@ public enum ErrorCode {
     // ── FCM ───────────────────────────────────────────────────────────────
     FCM_TOKEN_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 FCM 토큰입니다."),
     FCM_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "푸시 알림 발송에 실패했습니다.");
+
 
     private final HttpStatus status;
     private final String message;

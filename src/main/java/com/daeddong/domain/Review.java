@@ -3,6 +3,8 @@ package com.daeddong.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "reviews")
@@ -30,6 +32,9 @@ public class Review {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewTag> tags = new ArrayList<>();
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -38,7 +43,8 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Review create(Toilet toilet, String deviceId, int rating, String content, String imageUrl) {
+    public static Review create(Toilet toilet, String deviceId,
+                                int rating, String content, String imageUrl) {
         Review r = new Review();
         r.toilet = toilet;
         r.deviceId = deviceId;
@@ -46,5 +52,10 @@ public class Review {
         r.content = content;
         r.imageUrl = imageUrl;
         return r;
+    }
+
+    /** 태그 추가 (ReviewService에서 호출) */
+    public void addTag(ReviewTag tag) {
+        this.tags.add(tag);
     }
 }
