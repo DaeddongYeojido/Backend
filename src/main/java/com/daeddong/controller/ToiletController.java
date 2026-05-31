@@ -2,6 +2,7 @@ package com.daeddong.controller;
 
 import com.daeddong.dto.request.ToiletNearbyRequest;
 import com.daeddong.dto.response.ToiletDetailResponse;
+import com.daeddong.dto.response.ToiletSearchResponse;
 import com.daeddong.dto.response.ToiletSummaryResponse;
 import com.daeddong.global.response.ApiResponse;
 import com.daeddong.service.ToiletService;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +61,26 @@ public class ToiletController {
             @Parameter(description = "화장실 ID") @PathVariable Long id
     ) {
         return ResponseEntity.ok(ApiResponse.ok(toiletService.findDetail(id)));
+    }
+
+    @Operation(summary = "화장실 키워드 검색",
+            description = """
+                    이름 또는 주소에 키워드가 포함된 화장실을 검색합니다.
+                    
+                    - 최소 2자, 최대 50자
+                    - CLOSED 상태 제외
+                    - lat/lng 제공 시 거리순 + distanceMeters 포함 / 미제공 시 이름순
+                    - 최대 20건 반환
+                    """)
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<ToiletSearchResponse>>> search(
+            @Parameter(description = "검색어 (2~50자)", example = "서울시청")
+            @RequestParam @NotBlank String keyword,
+            @Parameter(description = "현재 위도 (거리 계산용, 선택)", example = "37.5665")
+            @RequestParam(required = false) Double lat,
+            @Parameter(description = "현재 경도 (거리 계산용, 선택)", example = "126.9780")
+            @RequestParam(required = false) Double lng
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(toiletService.search(keyword, lat, lng)));
     }
 }

@@ -59,6 +59,10 @@ public enum ErrorCode {
     PAPER_REQUEST_ALREADY_RESCUED(HttpStatus.CONFLICT, "이미 구조 완료된 요청입니다."),
     PAPER_REQUEST_DUPLICATE(HttpStatus.CONFLICT, "해당 화장실에 이미 진행 중인 휴지 요청이 있습니다."),
 
+    // ── 검색 ──────────────────────────────────────────────────────────────
+    SEARCH_KEYWORD_TOO_SHORT(HttpStatus.BAD_REQUEST, "검색어는 2자 이상 입력해주세요."),
+    SEARCH_KEYWORD_TOO_LONG(HttpStatus.BAD_REQUEST, "검색어는 50자 이하로 입력해주세요."),
+
     // ── FCM ───────────────────────────────────────────────────────────────
     FCM_TOKEN_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 FCM 토큰입니다."),
     FCM_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "푸시 알림 발송에 실패했습니다.");

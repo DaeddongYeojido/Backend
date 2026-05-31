@@ -5,6 +5,7 @@ import com.daeddong.domain.Toilet;
 import com.daeddong.dto.request.ToiletNearbyRequest;
 import com.daeddong.dto.response.ToiletDetailResponse;
 import com.daeddong.dto.response.ToiletDetailResponse.TagCount;
+import com.daeddong.dto.response.ToiletSearchResponse;
 import com.daeddong.dto.response.ToiletSummaryResponse;
 import com.daeddong.global.exception.DaeddongException;
 import com.daeddong.global.exception.ErrorCode;
@@ -81,5 +82,48 @@ public class ToiletService {
                 .map(ToiletSummaryResponse::from)
                 .orElseThrow(() -> new DaeddongException(
                         ErrorCode.TOILET_NOT_FOUND, "주변 5km 내 화장실이 없습니다."));
+    }
+
+    // ── 키워드 검색 ──────────────────────────────────────────────────────
+
+    private static final int SEARCH_MAX_RESULTS = 20;
+
+    /**
+     * 이름 또는 주소에 keyword가 포함된 화장실 검색.
+     * - 2자 이상, 50자 이하
+     * - CLOSED 제외
+     * - lat/lng 있으면 거리순 + distanceMeters 포함, 없으면 이름순
+     * - 최대 20건
+     */
+    public List<ToiletSearchResponse> search(String keyword, Double lat, Double lng) {
+        String trimmed = keyword.trim();
+        if (trimmed.length() < 2) {
+            throw new DaeddongException(ErrorCode.SEARCH_KEYWORD_TOO_SHORT);
+        }
+        if (trimmed.length() > 50) {
+            throw new DaeddongException(ErrorCode.SEARCH_KEYWORD_TOO_LONG);
+        }
+
+        return toiletRepository
+                .searchByKeyword(trimmed, lat, lng, SEARCH_MAX_RESULTS)
+                .stream()
+                .map(toilet -> {
+                    Double distance = (lat != null && lng != null)
+                            ? calculateDistance(lat, lng, toilet.getLat(), toilet.getLng())
+                            : null;
+                    return ToiletSearchResponse.from(toilet, distance);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /** Haversine 공식으로 두 좌표 간 거리(미터) 계산 */
+    private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+        final int R = 6371000;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 }
