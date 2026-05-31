@@ -102,8 +102,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<?> handleOptimisticLock() {
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body("이미 다른 관리자가 처리한 제보입니다.");
+                .status(ErrorCode.REPORT_DUPLICATE.getStatus())
+                .body(ApiResponse.fail(ErrorCode.REPORT_DUPLICATE.getMessage()));
     }
 
     // ── 예상치 못한 예외 (최후 방어선) ─────────────────────────────────────
