@@ -100,9 +100,9 @@ public class GlobalExceptionHandler {
 
     // ── 동시 수정 ────────────────────────────────────────────────
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<?> handleOptimisticLock() {
-        return ResponseEntity
-                .status(ErrorCode.REPORT_DUPLICATE.getStatus())
+    public ResponseEntity<ApiResponse<Void>> handleOptimisticLock(ObjectOptimisticLockingFailureException e) {
+        log.warn("[OptimisticLock] {}", e.getMessage());
+        return ResponseEntity.status(ErrorCode.REPORT_DUPLICATE.getStatus())
                 .body(ApiResponse.fail(ErrorCode.REPORT_DUPLICATE.getMessage()));
     }
 
