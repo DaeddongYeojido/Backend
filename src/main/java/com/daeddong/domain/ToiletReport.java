@@ -21,6 +21,10 @@ public class ToiletReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 동시 수정 제어를 위한
+    @Version
+    private Long version;
+
     /** 제보한 기기 ID */
     @Column(name = "device_id", nullable = false, length = 100)
     private String deviceId;

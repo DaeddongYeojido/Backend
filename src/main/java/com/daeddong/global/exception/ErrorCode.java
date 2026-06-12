@@ -49,6 +49,7 @@ public enum ErrorCode {
     REPORT_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 제보만 삭제할 수 있습니다."),
     REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, "이미 처리된 제보입니다."),
     REPORT_DUPLICATE(HttpStatus.CONFLICT, "동일한 위치에 이미 제보가 접수되어 있습니다."),
+    INVALID_LOCATION(HttpStatus.BAD_REQUEST, "서울 지역만 제보 가능합니다."),
 
     // ── 휴지 요청 ─────────────────────────────────────────────────────────
     PAPER_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "휴지 요청을 찾을 수 없습니다."),
